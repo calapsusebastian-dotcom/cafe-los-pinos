@@ -21,7 +21,7 @@
   <meta name="twitter:title" content="@yield('title', 'Café Los Pinos · Café del Huila tostado con pasión')">
   <meta name="twitter:description" content="@yield('description', $content['seo_description'])">
   <meta name="twitter:image" content="@yield('og_image', asset('img/finca.png'))">
-  <link rel="icon" href="{{ asset('favicon.ico') }}">
+  <link rel="icon" type="image/png" href="{{ asset('img/logo-header.png') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:wght@500;600&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
