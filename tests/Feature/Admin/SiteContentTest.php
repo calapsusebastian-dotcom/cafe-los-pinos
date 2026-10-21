@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\SiteSetting;
 use App\Models\User;
 use App\Support\SiteContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SiteContentTest extends TestCase
@@ -71,6 +74,37 @@ class SiteContentTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->put(route('admin.content.update'), $payload)
             ->assertSessionHasErrors('whatsapp_number');
+    }
+
+    public function test_admin_can_upload_and_remove_a_site_image(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create();
+
+        $this->actingAs($admin)
+            ->put(route('admin.content.update'), ['hero_image' => UploadedFile::fake()->create('portada.png', 50, 'image/png')] + $this->allDefaults())
+            ->assertSessionHasNoErrors();
+
+        $path = SiteSetting::query()->where('key', 'hero_image')->value('value');
+        Storage::disk('public')->assertExists($path);
+        $this->assertStringContainsString($path, SiteContent::imageUrls()['hero_image']);
+        $this->get(route('home'))->assertSee($path, false);
+
+        $this->actingAs($admin)
+            ->put(route('admin.content.update'), ['remove_hero_image' => '1'] + $this->allDefaults())
+            ->assertSessionHasNoErrors();
+
+        Storage::disk('public')->assertMissing($path);
+        $this->assertStringEndsWith('img/finca.png', SiteContent::imageUrls()['hero_image']);
+    }
+
+    public function test_site_images_must_be_valid_pictures(): void
+    {
+        $payload = ['hero_image' => UploadedFile::fake()->create('portada.pdf', 10, 'application/pdf')] + $this->allDefaults();
+
+        $this->actingAs(User::factory()->create())
+            ->put(route('admin.content.update'), $payload)
+            ->assertSessionHasErrors('hero_image');
     }
 
     public function test_unknown_keys_are_not_stored(): void

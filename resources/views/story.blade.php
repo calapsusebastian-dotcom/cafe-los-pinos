@@ -19,7 +19,7 @@
 @endpush
 
 @section('content')
-    <section class="history-hero">
+    <section class="history-hero" style="--section-image: url('{{ $images['story_hero_image'] }}')">
       <div class="history-hero__content">
         <p class="hero__eyebrow">Nuestra historia</p>
         <h1 class="hero__title">{!! nl2br(e($content['story_quote'])) !!}</h1>
@@ -33,7 +33,7 @@
     <div class="chapters-wrap" id="origen">
     <section class="chapters">
       <article class="chapter" data-reveal>
-        <div class="chapter__media chapter__media--1" aria-hidden="true"><span class="chapter__number">01</span></div>
+        <div class="chapter__media chapter__media--1 @if (! str_ends_with($images['chapter_1_image'], 'img/finca.png')) chapter__media--custom @endif" style="--section-image: url('{{ $images['chapter_1_image'] }}')" aria-hidden="true"><span class="chapter__number">01</span></div>
         <div class="chapter__body">
           <p class="eyebrow">{{ $content['chapter_1_eyebrow'] }}</p>
           <h2 class="chapter__title">{{ $content['chapter_1_title'] }}</h2>
@@ -42,7 +42,7 @@
       </article>
 
       <article class="chapter chapter--reverse" data-reveal>
-        <div class="chapter__media chapter__media--2" aria-hidden="true"><span class="chapter__number">02</span></div>
+        <div class="chapter__media chapter__media--2 @if (! str_ends_with($images['chapter_2_image'], 'img/finca.png')) chapter__media--custom @endif" style="--section-image: url('{{ $images['chapter_2_image'] }}')" aria-hidden="true"><span class="chapter__number">02</span></div>
         <div class="chapter__body">
           <p class="eyebrow">{{ $content['chapter_2_eyebrow'] }}</p>
           <h2 class="chapter__title">{{ $content['chapter_2_title'] }}</h2>
@@ -51,7 +51,7 @@
       </article>
 
       <article class="chapter" data-reveal>
-        <div class="chapter__media chapter__media--3" aria-hidden="true"><span class="chapter__number">03</span></div>
+        <div class="chapter__media chapter__media--3 @if (! str_ends_with($images['chapter_3_image'], 'img/finca.png')) chapter__media--custom @endif" style="--section-image: url('{{ $images['chapter_3_image'] }}')" aria-hidden="true"><span class="chapter__number">03</span></div>
         <div class="chapter__body">
           <p class="eyebrow">{{ $content['chapter_3_eyebrow'] }}</p>
           <h2 class="chapter__title">{{ $content['chapter_3_title'] }}</h2>
@@ -60,7 +60,7 @@
       </article>
 
       <article class="chapter chapter--reverse" data-reveal>
-        <div class="chapter__media chapter__media--4" aria-hidden="true"><span class="chapter__number">04</span></div>
+        <div class="chapter__media chapter__media--4 @if (! str_ends_with($images['chapter_4_image'], 'img/finca.png')) chapter__media--custom @endif" style="--section-image: url('{{ $images['chapter_4_image'] }}')" aria-hidden="true"><span class="chapter__number">04</span></div>
         <div class="chapter__body">
           <p class="eyebrow">{{ $content['chapter_4_eyebrow'] }}</p>
           <h2 class="chapter__title">{{ $content['chapter_4_title'] }}</h2>

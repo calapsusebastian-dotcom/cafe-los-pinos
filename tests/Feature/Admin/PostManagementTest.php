@@ -5,6 +5,8 @@ namespace Tests\Feature\Admin;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PostManagementTest extends TestCase
@@ -89,5 +91,66 @@ class PostManagementTest extends TestCase
             ->assertRedirect(route('admin.posts.index'));
 
         $this->assertModelMissing($post);
+    }
+
+    public function test_admin_can_upload_replace_and_remove_a_cover_image(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create();
+
+        $this->actingAs($admin)
+            ->post(route('admin.posts.store'), $this->validPayload(['cover_image' => UploadedFile::fake()->create('portada.png', 50, 'image/png')]))
+            ->assertSessionHasNoErrors();
+
+        $post = Post::firstOrFail();
+        Storage::disk('public')->assertExists($post->cover_image);
+        $this->get(route('blog.show', $post))->assertSee($post->cover_url, false);
+        $this->get(route('blog.index'))->assertSee($post->cover_url, false);
+
+        $first = $post->cover_image;
+        $this->actingAs($admin)
+            ->put(route('admin.posts.update', $post), $this->validPayload(['slug' => $post->slug, 'cover_image' => UploadedFile::fake()->create('otra.png', 50, 'image/png')]));
+
+        $second = $post->fresh()->cover_image;
+        $this->assertNotSame($first, $second);
+        Storage::disk('public')->assertMissing($first);
+        Storage::disk('public')->assertExists($second);
+
+        $this->actingAs($admin)
+            ->put(route('admin.posts.update', $post), $this->validPayload(['slug' => $post->slug, 'remove_cover_image' => '1']));
+
+        $this->assertNull($post->fresh()->cover_image);
+        Storage::disk('public')->assertMissing($second);
+    }
+
+    public function test_updating_without_a_new_file_keeps_the_cover_image(): void
+    {
+        Storage::fake('public');
+        $path = UploadedFile::fake()->create('portada.png', 50, 'image/png')->store('blog', 'public');
+        $post = Post::factory()->create(['slug' => 'mi-articulo', 'cover_image' => $path]);
+
+        $this->actingAs(User::factory()->create())
+            ->put(route('admin.posts.update', $post), $this->validPayload(['slug' => 'mi-articulo']));
+
+        $this->assertSame($path, $post->fresh()->cover_image);
+        Storage::disk('public')->assertExists($path);
+    }
+
+    public function test_cover_image_must_be_a_picture(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->post(route('admin.posts.store'), $this->validPayload(['cover_image' => UploadedFile::fake()->create('virus.pdf', 10, 'application/pdf')]))
+            ->assertSessionHasErrors('cover_image');
+    }
+
+    public function test_deleting_a_post_deletes_its_cover_image(): void
+    {
+        Storage::fake('public');
+        $path = UploadedFile::fake()->create('portada.png', 50, 'image/png')->store('blog', 'public');
+        $post = Post::factory()->create(['cover_image' => $path]);
+
+        $this->actingAs(User::factory()->create())->delete(route('admin.posts.destroy', $post));
+
+        Storage::disk('public')->assertMissing($path);
     }
 }

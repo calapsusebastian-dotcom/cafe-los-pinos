@@ -4,6 +4,7 @@
 @section('description', $post->excerpt)
 @section('canonical', route('blog.show', $post))
 @section('og_type', 'article')
+@section('og_image', $post->cover_url ?? asset('img/finca.png'))
 
 @push('head')
   <meta property="article:published_time" content="{{ $post->published_at->toAtomString() }}">
@@ -16,7 +17,7 @@
         'description' => $post->excerpt,
         'url' => route('blog.show', $post),
         'mainEntityOfPage' => route('blog.show', $post),
-        'image' => asset('img/finca.png'),
+        'image' => $post->cover_url ?? asset('img/finca.png'),
         'inLanguage' => 'es-CO',
         'datePublished' => $post->published_at->toAtomString(),
         'dateModified' => $post->updated_at->toAtomString(),
@@ -57,6 +58,10 @@
         <p class="blog__lead">{{ $post->excerpt }}</p>
       </header>
 
+      @if ($post->cover_url)
+        <img src="{{ $post->cover_url }}" alt="{{ $post->title }}" class="blog__cover">
+      @endif
+
       <div class="prose">
         {{ $post->body_html }}
       </div>
@@ -73,6 +78,9 @@
         <div class="blog__grid">
           @foreach ($more as $item)
             <article class="post-card">
+            @if ($item->cover_url)
+              <a href="{{ route('blog.show', $item) }}" class="post-card__cover" tabindex="-1" aria-hidden="true"><img src="{{ $item->cover_url }}" alt="" loading="lazy"></a>
+            @endif
               <time class="post-card__date" datetime="{{ $item->published_at->toDateString() }}">{{ $item->published_at->locale('es')->translatedFormat('j \d\e F, Y') }}</time>
               <h3 class="post-card__title"><a href="{{ route('blog.show', $item) }}">{{ $item->title }}</a></h3>
               <p class="post-card__excerpt">{{ $item->excerpt }}</p>

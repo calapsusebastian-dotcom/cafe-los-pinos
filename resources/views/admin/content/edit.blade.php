@@ -5,9 +5,27 @@
 @section('content')
   <div class="admin-head"><h1>Textos del sitio</h1></div>
 
-  <form method="POST" action="{{ route('admin.content.update') }}" class="form">
+  <form method="POST" action="{{ route('admin.content.update') }}" class="form" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+
+    <fieldset class="panel">
+      <legend>Imágenes del sitio</legend>
+      <p class="muted">Cada foto aparece en el lugar indicado. Si no subes una, se queda la actual. JPG, PNG o WebP, máximo 4 MB.</p>
+
+      @foreach ($images as $key => $image)
+        <div class="field">
+          <label for="{{ $key }}">{{ $image['label'] }}</label>
+          <img src="{{ $imageUrls[$key] }}" alt="" class="form-thumb form-thumb--wide">
+          <input type="file" id="{{ $key }}" name="{{ $key }}" accept="image/png,image/jpeg,image/webp">
+          <p class="muted">{{ $image['hint'] }}</p>
+          @if (in_array($key, $uploadedImages, true))
+            <label class="check"><input type="checkbox" name="remove_{{ $key }}" value="1"> Quitar mi foto y volver a la original</label>
+          @endif
+          @error($key)<p class="field__error">{{ $message }}</p>@enderror
+        </div>
+      @endforeach
+    </fieldset>
 
     @foreach ($sections as $section)
       <fieldset class="panel">

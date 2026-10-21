@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -38,13 +39,21 @@ class PostController extends Controller
 
     public function update(PostRequest $request, Post $post): RedirectResponse
     {
-        $post->update($this->attributesFrom($request));
+        $data = $this->attributesFrom($request);
+
+        if ($request->hasFile('cover_image') || $request->boolean('remove_cover_image')) {
+            $this->deleteCover($post);
+            $data['cover_image'] ??= null;
+        }
+
+        $post->update($data);
 
         return redirect()->route('admin.posts.index')->with('status', 'Artículo actualizado.');
     }
 
     public function destroy(Post $post): RedirectResponse
     {
+        $this->deleteCover($post);
         $post->delete();
 
         return redirect()->route('admin.posts.index')->with('status', 'Artículo eliminado.');
@@ -55,9 +64,20 @@ class PostController extends Controller
      */
     private function attributesFrom(PostRequest $request): array
     {
-        $data = $request->validated();
+        $data = $request->safe()->except(['cover_image', 'remove_cover_image']);
         $data['published_at'] ??= $data['is_published'] ? now() : null;
 
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('blog', 'public');
+        }
+
         return $data;
+    }
+
+    private function deleteCover(Post $post): void
+    {
+        if (filled($post->cover_image)) {
+            Storage::disk('public')->delete($post->cover_image);
+        }
     }
 }

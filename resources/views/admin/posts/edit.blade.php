@@ -5,7 +5,7 @@
 @section('content')
   <div class="admin-head"><h1>Editar {{ $post->title }}</h1></div>
 
-  <form method="POST" action="{{ route('admin.posts.update', $post) }}" class="panel form">
+  <form method="POST" action="{{ route('admin.posts.update', $post) }}" class="panel form" enctype="multipart/form-data">
     @method('PUT')
     @include('admin.posts._form')
   </form>

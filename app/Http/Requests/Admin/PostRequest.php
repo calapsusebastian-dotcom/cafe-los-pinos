@@ -20,6 +20,8 @@ class PostRequest extends FormRequest
             'title' => ['required', 'string', 'max:150'],
             'slug' => ['required', 'string', 'max:160', Rule::unique('posts', 'slug')->ignore($post instanceof Post ? $post->getKey() : null)],
             'excerpt' => ['required', 'string', 'max:300'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'remove_cover_image' => ['boolean'],
             'body' => ['required', 'string', 'max:60000'],
             'is_published' => ['boolean'],
             'published_at' => ['nullable', 'date'],
@@ -35,6 +37,7 @@ class PostRequest extends FormRequest
             'title' => 'título',
             'slug' => 'dirección web',
             'excerpt' => 'resumen',
+            'cover_image' => 'imagen de portada',
             'body' => 'contenido',
             'published_at' => 'fecha de publicación',
         ];
@@ -44,6 +47,7 @@ class PostRequest extends FormRequest
     {
         $this->merge([
             'is_published' => $this->boolean('is_published'),
+            'remove_cover_image' => $this->boolean('remove_cover_image'),
             'slug' => Str::slug((string) ($this->input('slug') ?: $this->input('title'))),
         ]);
     }

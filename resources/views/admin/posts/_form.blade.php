@@ -21,6 +21,19 @@
 </div>
 
 <div class="field">
+  <label for="cover_image">Imagen de portada</label>
+  @if ($post->cover_url)
+    <img src="{{ $post->cover_url }}" alt="" class="form-thumb form-thumb--wide">
+  @endif
+  <input type="file" id="cover_image" name="cover_image" accept="image/png,image/jpeg,image/webp">
+  <p class="muted">Aparece arriba del artículo y en la lista del blog. Mejor horizontal, mínimo 1200 px de ancho. JPG, PNG o WebP, máximo 4 MB.@if ($post->cover_url) Déjala vacía para conservar la actual.@endif</p>
+  @if ($post->cover_url)
+    <label class="check"><input type="checkbox" name="remove_cover_image" value="1"> Quitar la imagen de portada</label>
+  @endif
+  @error('cover_image')<p class="field__error">{{ $message }}</p>@enderror
+</div>
+
+<div class="field">
   <label for="body">Contenido</label>
   <textarea id="body" name="body" rows="18" required>{{ old('body', $post->body) }}</textarea>
   <p class="muted">Usa <code>## Subtítulo</code> para títulos, <code>**negrita**</code>, <code>- elemento</code> para listas y una línea en blanco entre párrafos.</p>

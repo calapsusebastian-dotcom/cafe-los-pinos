@@ -27,6 +27,7 @@ class HomeController extends Controller
             'products' => $products,
             'search' => $search,
             'content' => SiteContent::all(),
+            'images' => SiteContent::imageUrls(),
         ]);
     }
 
@@ -34,6 +35,7 @@ class HomeController extends Controller
     {
         return view('story', [
             'content' => SiteContent::all(),
+            'images' => SiteContent::imageUrls(),
         ]);
     }
 

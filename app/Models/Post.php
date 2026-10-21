@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-#[Fillable(['title', 'slug', 'excerpt', 'body', 'is_published', 'published_at'])]
+#[Fillable(['title', 'slug', 'excerpt', 'cover_image', 'body', 'is_published', 'published_at'])]
 class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
@@ -56,6 +57,18 @@ class Post extends Model
     public function scopeLatestFirst(Builder $query): void
     {
         $query->orderByDesc('published_at')->orderByDesc('id');
+    }
+
+    /**
+     * Public URL of the cover picture, or null when the post has none.
+     *
+     * @return Attribute<string|null, never>
+     */
+    protected function coverUrl(): Attribute
+    {
+        return Attribute::get(fn (): ?string => filled($this->cover_image)
+            ? Storage::disk('public')->url($this->cover_image)
+            : null);
     }
 
     public function isLive(): bool

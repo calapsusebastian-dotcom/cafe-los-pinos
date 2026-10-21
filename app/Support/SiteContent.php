@@ -3,6 +3,8 @@
 namespace App\Support;
 
 use App\Models\SiteSetting;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Editable texts of the public site. Each field falls back to its default
@@ -120,6 +122,82 @@ class SiteContent
                 ],
             ],
         ];
+    }
+
+    /**
+     * Editable pictures of the public site and the place where each appears.
+     *
+     * @return array<string, array{label: string, hint: string, default: string}>
+     */
+    public static function images(): array
+    {
+        $images = [
+            'hero_image' => ['label' => 'Portada', 'hint' => 'Fondo grande de la página de inicio, detrás del título. Mejor horizontal, mínimo 1600 px de ancho.'],
+            'story_hero_image' => ['label' => 'Cabecera de Nuestra historia', 'hint' => 'Fondo grande al inicio de la página Nuestra historia. Mejor horizontal, mínimo 1600 px de ancho.'],
+        ];
+
+        foreach (range(1, 4) as $number) {
+            $images["chapter_{$number}_image"] = ['label' => "Capítulo {$number}", 'hint' => "Foto junto al texto del capítulo {$number} en Nuestra historia. Mejor horizontal, mínimo 900 px de ancho."];
+        }
+
+        return array_map(fn (array $image): array => $image + ['default' => 'img/finca.png'], $images);
+    }
+
+    /**
+     * Public URL of every picture, using the shipped one when none is uploaded.
+     *
+     * @return array<string, string>
+     */
+    public static function imageUrls(): array
+    {
+        $saved = SiteSetting::query()->whereIn('key', array_keys(self::images()))->pluck('value', 'key');
+
+        return collect(self::images())
+            ->map(fn (array $image, string $key): string => filled($saved[$key] ?? null)
+                ? Storage::disk('public')->url($saved[$key])
+                : asset($image['default']))
+            ->all();
+    }
+
+    /**
+     * Keys of the pictures that currently have an uploaded file.
+     *
+     * @return array<int, string>
+     */
+    public static function uploadedImageKeys(): array
+    {
+        return SiteSetting::query()
+            ->whereIn('key', array_keys(self::images()))
+            ->where('value', '!=', '')
+            ->pluck('key')
+            ->all();
+    }
+
+    public static function saveImage(string $key, UploadedFile $file): void
+    {
+        abort_unless(isset(self::images()[$key]), 404);
+
+        self::deleteImage($key);
+
+        SiteSetting::updateOrCreate(['key' => $key], ['value' => $file->store('contenido', 'public')]);
+    }
+
+    /**
+     * Removes the uploaded file so the shipped picture is used again.
+     */
+    public static function deleteImage(string $key): void
+    {
+        $setting = SiteSetting::query()->where('key', $key)->first();
+
+        if ($setting === null || ! array_key_exists($key, self::images())) {
+            return;
+        }
+
+        if (filled($setting->value)) {
+            Storage::disk('public')->delete($setting->value);
+        }
+
+        $setting->delete();
     }
 
     /**

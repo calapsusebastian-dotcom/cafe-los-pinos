@@ -15,6 +15,9 @@
       <div class="blog__grid">
         @forelse ($posts as $post)
           <article class="post-card">
+            @if ($post->cover_url)
+              <a href="{{ route('blog.show', $post) }}" class="post-card__cover" tabindex="-1" aria-hidden="true"><img src="{{ $post->cover_url }}" alt="" loading="lazy"></a>
+            @endif
             <time class="post-card__date" datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->locale('es')->translatedFormat('j \d\e F, Y') }}</time>
             <h2 class="post-card__title"><a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a></h2>
             <p class="post-card__excerpt">{{ $post->excerpt }}</p>

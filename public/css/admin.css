@@ -353,3 +353,9 @@ fieldset.panel legend {
   background: #fff;
   font: inherit;
 }
+
+.form-thumb--wide {
+  width: 220px;
+  height: 124px;
+  object-fit: cover;
+}

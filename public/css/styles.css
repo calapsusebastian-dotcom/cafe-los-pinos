@@ -142,7 +142,7 @@ body {
   background:
     linear-gradient(180deg, var(--color-header) 0, rgba(18, 38, 31, 0.6) 40px, transparent 160px),
     linear-gradient(90deg, rgba(10, 30, 20, 0.8) 0%, rgba(10, 30, 20, 0.45) 50%, rgba(10, 30, 20, 0.1) 100%),
-    url("../img/finca.png") 50% 70% / cover no-repeat;
+    var(--section-image, url("../img/finca.png")) 50% 70% / cover no-repeat;
   color: var(--color-text);
 }
 
@@ -875,7 +875,7 @@ body {
   background:
     linear-gradient(180deg, var(--color-header) 0, rgba(18, 38, 31, 0.6) 40px, transparent 160px),
     linear-gradient(180deg, rgba(10, 30, 20, 0.55) 0%, rgba(10, 30, 20, 0.85) 100%),
-    url("../img/finca.png") 50% 60% / cover no-repeat;
+    var(--section-image, url("../img/finca.png")) 50% 60% / cover no-repeat;
   color: var(--color-text);
 }
 
@@ -1171,7 +1171,7 @@ body {
     linear-gradient(180deg, var(--color-header) 0, rgba(18, 38, 31, 0.6) 40px, transparent 160px),
     linear-gradient(0deg, rgba(10, 30, 20, 0.55) 0%, transparent 35%),
     linear-gradient(90deg, rgba(10, 30, 20, 0.88) 0%, rgba(10, 30, 20, 0.5) 50%, rgba(10, 30, 20, 0.12) 100%),
-    url("../img/finca.png") 50% 70% / cover no-repeat;
+    var(--section-image, url("../img/finca.png")) 50% 70% / cover no-repeat;
 }
 
 .hero__eyebrow {
@@ -1406,7 +1406,7 @@ body {
     linear-gradient(180deg, var(--color-header) 0, rgba(18, 38, 31, 0.6) 40px, transparent 160px),
     linear-gradient(0deg, #f7f3ec 0, transparent 14%),
     linear-gradient(180deg, rgba(10, 30, 20, 0.45) 0%, rgba(10, 30, 20, 0.85) 100%),
-    url("../img/finca.png") 50% 60% / cover no-repeat;
+    var(--section-image, url("../img/finca.png")) 50% 60% / cover no-repeat;
 }
 
 .history-hero__content {
@@ -1472,7 +1472,7 @@ body {
 .chapter__media {
   position: relative;
   min-height: 340px;
-  background-image: url("../img/finca.png");
+  background-image: var(--section-image, url("../img/finca.png"));
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -1488,6 +1488,7 @@ body {
 .chapter__media--2 { background-position: 90% 40%; background-size: 190%; }
 .chapter__media--3 { background-position: 50% 95%; background-size: 220%; }
 .chapter__media--4 { background-position: 30% 15%; background-size: 170%; }
+.chapter__media--custom { background-position: 50% 50%; background-size: cover; }
 
 .chapter__number {
   position: absolute;
@@ -2403,4 +2404,30 @@ body {
   color: #17382b;
   font-family: var(--font-title);
   font-size: 22px;
+}
+
+/* Portada de los artículos del blog */
+.blog__cover {
+  display: block;
+  width: 100%;
+  max-width: 740px;
+  max-height: 420px;
+  margin: 0 0 32px;
+  border-radius: 18px;
+  object-fit: cover;
+  box-shadow: 0 10px 28px rgba(18, 38, 31, 0.1);
+}
+
+.post-card__cover {
+  display: block;
+  margin: -28px -28px 6px;
+  overflow: hidden;
+  border-radius: 18px 18px 0 0;
+}
+
+.post-card__cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }

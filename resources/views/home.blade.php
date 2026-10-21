@@ -32,7 +32,7 @@
 @endpush
 
 @section('content')
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" style="--section-image: url('{{ $images['hero_image'] }}')">
       <div class="hero__content">
         <p class="hero__eyebrow">{{ $content['hero_eyebrow'] }}</p>
         <h1 class="hero__title">{{ $content['hero_title'] }}</h1>
