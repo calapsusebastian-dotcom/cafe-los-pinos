@@ -17,15 +17,25 @@ class OrderController extends Controller
     public function index(Request $request): View
     {
         $status = OrderStatus::tryFrom((string) $request->query('estado'));
+        $search = trim((string) $request->query('buscar'));
 
         return view('admin.orders.index', [
             'orders' => Order::query()
                 ->withCount('items')
                 ->when($status, fn ($query) => $query->where('status', $status))
+                ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search): void {
+                    $term = '%'.addcslashes($search, '%_\\').'%';
+
+                    $query->where('customer_name', 'like', $term)
+                        ->orWhere('customer_phone', 'like', $term)
+                        ->orWhere('city', 'like', $term)
+                        ->orWhere('id', ltrim($search, '#'));
+                }))
                 ->latest()
                 ->paginate(20)
                 ->withQueryString(),
             'status' => $status,
+            'search' => $search,
             'statuses' => OrderStatus::cases(),
         ]);
     }

@@ -19,7 +19,7 @@ class StoreOrderRequest extends FormRequest
             'address' => ['required', 'string', 'max:200'],
             'notes' => ['nullable', 'string', 'max:300'],
             'items' => ['required', 'array', 'min:1', 'max:30'],
-            'items.*.id' => ['required', 'integer', Rule::exists('products', 'id')->where('is_visible', true)],
+            'items.*.id' => ['required', 'integer', Rule::exists('products', 'id')->where('is_visible', 1)->where('is_sold_out', 0)],
             'items.*.qty' => ['required', 'integer', 'min:1', 'max:50'],
         ];
     }
@@ -46,7 +46,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'customer_phone.regex' => 'Escribe tu celular solo con números (entre 7 y 15 dígitos).',
-            'items.*.id.exists' => 'Uno de los productos ya no está disponible. Revisa tu carrito.',
+            'items.*.id.exists' => 'Uno de los productos ya no está disponible o se agotó. Revisa tu carrito.',
         ];
     }
 

@@ -24,8 +24,14 @@ class ProductFactory extends Factory
             'weight' => '500 g',
             'image' => Product::FALLBACK_IMAGE,
             'is_visible' => true,
+            'is_sold_out' => false,
             'sort_order' => 0,
         ];
+    }
+
+    public function soldOut(): static
+    {
+        return $this->state(fn (): array => ['is_sold_out' => true]);
     }
 
     public function hidden(): static

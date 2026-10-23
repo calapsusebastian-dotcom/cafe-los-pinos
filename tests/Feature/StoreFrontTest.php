@@ -188,4 +188,15 @@ class StoreFrontTest extends TestCase
             ->assertSee('"@type":"BreadcrumbList"', false)
             ->assertSee('"sku":"CLP-'.$product->id.'"', false);
     }
+
+    public function test_sold_out_products_show_a_disabled_button_instead_of_add_to_cart(): void
+    {
+        Product::factory()->soldOut()->create(['name' => 'Agotadito']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Agotadito')
+            ->assertSee('Agotado')
+            ->assertDontSee('data-add-to-cart', false);
+    }
 }

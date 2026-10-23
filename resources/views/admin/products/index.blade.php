@@ -36,6 +36,9 @@
               @else
                 <span class="pill">Oculto</span>
               @endif
+              @if ($product->is_sold_out)
+                <span class="pill">Agotado</span>
+              @endif
             </td>
             <td class="table__actions">
               <a href="{{ route('admin.products.edit', $product) }}" class="link">Editar</a>

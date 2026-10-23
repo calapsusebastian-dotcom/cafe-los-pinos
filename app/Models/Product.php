@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'description', 'price', 'weight', 'image', 'is_visible', 'sort_order'])]
+#[Fillable(['name', 'description', 'price', 'weight', 'image', 'is_visible', 'is_sold_out', 'sort_order'])]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -28,6 +28,7 @@ class Product extends Model
         return [
             'price' => 'integer',
             'is_visible' => 'boolean',
+            'is_sold_out' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

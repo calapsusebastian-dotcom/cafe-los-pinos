@@ -8,10 +8,17 @@
     <a href="{{ route('admin.orders.export', array_filter(['estado' => $status?->value])) }}" class="link">Exportar a Excel (CSV)</a>
   </div>
 
+  <form method="GET" action="{{ route('admin.orders.index') }}" class="search">
+    @if ($status)<input type="hidden" name="estado" value="{{ $status->value }}">@endif
+    <input type="search" name="buscar" value="{{ $search }}" placeholder="Buscar por nombre, celular, ciudad o #pedido" aria-label="Buscar pedidos">
+    <button type="submit" class="btn-admin">Buscar</button>
+    @if ($search !== '')<a href="{{ route('admin.orders.index', array_filter(['estado' => $status?->value])) }}" class="link">Limpiar</a>@endif
+  </form>
+
   <nav class="filters" aria-label="Filtrar por estado">
-    <a href="{{ route('admin.orders.index') }}" @class(['pill', 'pill--on' => ! $status])>Todos</a>
+    <a href="{{ route('admin.orders.index', array_filter(['buscar' => $search])) }}" @class(['pill', 'pill--on' => ! $status])>Todos</a>
     @foreach ($statuses as $option)
-      <a href="{{ route('admin.orders.index', ['estado' => $option->value]) }}" @class(['pill', 'pill--on' => $status === $option])>{{ $option->label() }}</a>
+      <a href="{{ route('admin.orders.index', array_filter(['estado' => $option->value, 'buscar' => $search])) }}" @class(['pill', 'pill--on' => $status === $option])>{{ $option->label() }}</a>
     @endforeach
   </nav>
 

@@ -65,12 +65,7 @@
           <p class="product-page__desc">{{ $product->description }}</p>
 
           <div class="product-page__actions">
-            <button type="button" class="btn btn--dark btn--small" data-add-to-cart
-                    data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-weight="{{ $product->weight }}"
-                    data-price="{{ $product->price }}" data-image="{{ $product->image_url }}">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.5 11h10L20 7H6.5"/><circle cx="9" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/></svg>
-              Agregar al carrito
-            </button>
+            @include('partials.add-to-cart', ['product' => $product])
             <a href="{{ App\Support\SiteContent::whatsappLink($content, 'Hola, quiero información sobre el café '.$product->name.' ('.$product->weight.').') }}" target="_blank" rel="noopener" class="btn btn--outline btn--small">Preguntar por WhatsApp</a>
           </div>
 
@@ -94,12 +89,7 @@
               </a>
               <p class="card__price">$ {{ number_format($product->price, 0, ',', '.') }}</p>
               <p class="card__weight">{{ $product->weight }}</p>
-              <button type="button" class="btn btn--dark btn--small" data-add-to-cart
-                      data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-weight="{{ $product->weight }}"
-                      data-price="{{ $product->price }}" data-image="{{ $product->image_url }}">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.5 11h10L20 7H6.5"/><circle cx="9" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/></svg>
-                Agregar al carrito
-              </button>
+              @include('partials.add-to-cart', ['product' => $product])
             </article>
           @endforeach
         </div>

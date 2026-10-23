@@ -187,4 +187,15 @@ class OrderTest extends TestCase
         $mail->assertSeeInHtml(route('admin.orders.show', $order));
         $mail->assertHasSubject("Nuevo pedido #{$order->id} · María Pérez");
     }
+
+    public function test_a_sold_out_product_cannot_be_ordered(): void
+    {
+        $product = Product::factory()->soldOut()->create();
+
+        $this->postJson(route('orders.store'), $this->payload([['id' => $product->id, 'qty' => 1]]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('items.0.id');
+
+        $this->assertDatabaseCount('orders', 0);
+    }
 }

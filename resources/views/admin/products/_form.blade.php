@@ -46,6 +46,10 @@
   <input type="checkbox" name="is_visible" value="1" @checked(old('is_visible', $product->is_visible))> Mostrar en la tienda
 </label>
 
+<label class="check">
+  <input type="checkbox" name="is_sold_out" value="1" @checked(old('is_sold_out', $product->is_sold_out))> Marcar como agotado
+</label>
+
 <div class="form-actions">
   <button type="submit" class="btn-admin">Guardar</button>
   <a href="{{ route('admin.products.index') }}" class="link">Cancelar</a>

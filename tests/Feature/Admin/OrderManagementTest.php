@@ -38,6 +38,23 @@ class OrderManagementTest extends TestCase
             ->assertDontSee('Cliente Pendiente');
     }
 
+    public function test_admin_can_search_orders_by_name_phone_or_number(): void
+    {
+        $ana = Order::factory()->create(['customer_name' => 'Ana Gómez', 'customer_phone' => '3001112222']);
+        Order::factory()->create(['customer_name' => 'Luis Torres', 'customer_phone' => '3109998888']);
+
+        $admin = User::factory()->create();
+
+        $this->actingAs($admin)->get(route('admin.orders.index', ['buscar' => 'Gómez']))
+            ->assertSee('Ana Gómez')->assertDontSee('Luis Torres');
+
+        $this->actingAs($admin)->get(route('admin.orders.index', ['buscar' => '3109998']))
+            ->assertSee('Luis Torres')->assertDontSee('Ana Gómez');
+
+        $this->actingAs($admin)->get(route('admin.orders.index', ['buscar' => '#'.$ana->id]))
+            ->assertSee('Ana Gómez')->assertDontSee('Luis Torres');
+    }
+
     public function test_admin_can_view_an_order_with_its_items(): void
     {
         $order = Order::factory()->create(['customer_name' => 'Ana Gómez']);

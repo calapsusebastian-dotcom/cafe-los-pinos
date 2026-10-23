@@ -21,6 +21,7 @@ class ProductRequest extends FormRequest
             'weight' => ['required', 'string', 'max:40'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'is_visible' => ['boolean'],
+            'is_sold_out' => ['boolean'],
             'image' => [$imageRule, 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
@@ -42,6 +43,9 @@ class ProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['is_visible' => $this->boolean('is_visible')]);
+        $this->merge([
+            'is_visible' => $this->boolean('is_visible'),
+            'is_sold_out' => $this->boolean('is_sold_out'),
+        ]);
     }
 }

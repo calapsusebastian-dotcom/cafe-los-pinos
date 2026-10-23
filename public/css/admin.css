@@ -397,3 +397,6 @@ a.stat:hover { border-color: var(--green); }
 }
 
 .admin-head__actions { display: flex; align-items: center; gap: 16px; }
+
+.search { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+.search input[type="search"] { flex: 1 1 18rem; min-width: 0; padding: .55rem .75rem; border: 1px solid #d8d2c4; border-radius: 8px; font: inherit; }
