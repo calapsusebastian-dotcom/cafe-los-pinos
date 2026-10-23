@@ -3,7 +3,10 @@
 @section('title', 'Pedidos')
 
 @section('content')
-  <div class="admin-head"><h1>Pedidos</h1></div>
+  <div class="admin-head">
+    <h1>Pedidos</h1>
+    <a href="{{ route('admin.orders.export', array_filter(['estado' => $status?->value])) }}" class="link">Exportar a Excel (CSV)</a>
+  </div>
 
   <nav class="filters" aria-label="Filtrar por estado">
     <a href="{{ route('admin.orders.index') }}" @class(['pill', 'pill--on' => ! $status])>Todos</a>

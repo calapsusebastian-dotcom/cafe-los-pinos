@@ -110,6 +110,18 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Order Notification Address
+    |--------------------------------------------------------------------------
+    |
+    | Address that receives an email each time a customer places an order.
+    | Leave it empty to disable the notification.
+    |
+    */
+
+    'order_notification_address' => env('ORDER_NOTIFICATION_EMAIL'),
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),

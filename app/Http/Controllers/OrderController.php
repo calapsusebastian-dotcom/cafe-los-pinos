@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
+use App\Mail\NewOrderMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Support\SiteContent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -49,10 +51,33 @@ class OrderController extends Controller
             return $order;
         });
 
+        $order->load('items');
+
+        $this->notifyOwner($order);
+
         return response()->json([
             'order' => $order->id,
-            'whatsapp_url' => SiteContent::whatsappLink($content, $this->whatsappMessage($order->load('items'))),
+            'whatsapp_url' => SiteContent::whatsappLink($content, $this->whatsappMessage($order)),
         ], 201);
+    }
+
+    /**
+     * Emails the owner about the new order. A mail failure must never lose the
+     * order or block the customer, so it is only reported.
+     */
+    private function notifyOwner(Order $order): void
+    {
+        $address = config('mail.order_notification_address');
+
+        if (blank($address)) {
+            return;
+        }
+
+        try {
+            Mail::to($address)->send(new NewOrderMail($order));
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function whatsappMessage(Order $order): string

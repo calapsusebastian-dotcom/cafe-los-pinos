@@ -14,17 +14,19 @@
 <body class="admin">
 
   <header class="admin-bar">
-    <a href="{{ route('admin.products.index') }}" class="admin-bar__brand">
+    <a href="{{ route('admin.dashboard') }}" class="admin-bar__brand">
       <img src="{{ asset('img/logo-header.png') }}" alt="Café Los Pinos">
       <span>Administrador</span>
     </a>
 
     <nav class="admin-bar__nav" aria-label="Administrador">
+      <a href="{{ route('admin.dashboard') }}" @class(['is-active' => request()->routeIs('admin.dashboard')])>Inicio</a>
       <a href="{{ route('admin.orders.index') }}" @class(['is-active' => request()->routeIs('admin.orders.*')])>Pedidos</a>
       <a href="{{ route('admin.products.index') }}" @class(['is-active' => request()->routeIs('admin.products.*')])>Productos</a>
       <a href="{{ route('admin.posts.index') }}" @class(['is-active' => request()->routeIs('admin.posts.*')])>Blog</a>
       <a href="{{ route('admin.subscribers.index') }}" @class(['is-active' => request()->routeIs('admin.subscribers.*')])>Suscriptores</a>
       <a href="{{ route('admin.content.edit') }}" @class(['is-active' => request()->routeIs('admin.content.*')])>Textos del sitio</a>
+      <a href="{{ route('admin.password.edit') }}" @class(['is-active' => request()->routeIs('admin.password.*')])>Contraseña</a>
       <a href="{{ route('home') }}" target="_blank" rel="noopener">Ver sitio ↗</a>
     </nav>
 

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SessionController;
@@ -30,7 +32,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     });
 
     Route::middleware('auth')->group(function (): void {
-        Route::redirect('/', '/admin/productos')->name('dashboard');
+        Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('contrasena', [PasswordController::class, 'edit'])->name('password.edit');
+        Route::put('contrasena', [PasswordController::class, 'update'])->name('password.update');
         Route::post('logout', [SessionController::class, 'destroy'])->name('logout');
 
         Route::resource('productos', ProductController::class)
@@ -38,6 +42,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
             ->names('products')
             ->except('show');
 
+        Route::get('pedidos/exportar', [AdminOrderController::class, 'export'])->name('orders.export');
         Route::get('pedidos', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('pedidos/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::put('pedidos/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
@@ -48,6 +53,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
             ->except('show');
 
         Route::get('contenido', [SiteContentController::class, 'edit'])->name('content.edit');
+        Route::get('suscriptores/exportar', [AdminSubscriberController::class, 'export'])->name('subscribers.export');
         Route::get('suscriptores', [AdminSubscriberController::class, 'index'])->name('subscribers.index');
         Route::delete('suscriptores/{subscriber}', [AdminSubscriberController::class, 'destroy'])->name('subscribers.destroy');
 

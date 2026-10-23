@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Enums\OrderStatus;
+use App\Mail\NewOrderMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -138,5 +140,51 @@ class OrderTest extends TestCase
             ->assertSee('data-orders-url="'.route('orders.store').'"', false)
             ->assertSee('name="customer_name"', false)
             ->assertSee('name="csrf-token"', false);
+    }
+
+    public function test_the_owner_is_emailed_when_an_order_is_placed(): void
+    {
+        Mail::fake();
+        config(['mail.order_notification_address' => 'dueno@correo.com']);
+        $product = Product::factory()->create();
+
+        $this->postJson(route('orders.store'), $this->payload([['id' => $product->id, 'qty' => 1]]))->assertCreated();
+
+        Mail::assertSent(NewOrderMail::class, fn (NewOrderMail $mail): bool => $mail->hasTo('dueno@correo.com'));
+    }
+
+    public function test_no_email_is_sent_without_a_notification_address(): void
+    {
+        Mail::fake();
+        config(['mail.order_notification_address' => null]);
+        $product = Product::factory()->create();
+
+        $this->postJson(route('orders.store'), $this->payload([['id' => $product->id, 'qty' => 1]]))->assertCreated();
+
+        Mail::assertNothingSent();
+    }
+
+    public function test_a_mail_failure_does_not_lose_the_order(): void
+    {
+        config(['mail.order_notification_address' => 'dueno@correo.com']);
+        Mail::shouldReceive('to')->andThrow(new \RuntimeException('SMTP caído'));
+        $product = Product::factory()->create();
+
+        $this->postJson(route('orders.store'), $this->payload([['id' => $product->id, 'qty' => 1]]))->assertCreated();
+
+        $this->assertDatabaseCount('orders', 1);
+    }
+
+    public function test_the_order_email_lists_the_items_and_links_to_the_admin(): void
+    {
+        $order = Order::factory()->create(['customer_name' => 'María Pérez', 'total' => 40000]);
+        $order->items()->create(['name' => 'Clásico', 'weight' => '500 g', 'unit_price' => 20000, 'quantity' => 2]);
+
+        $mail = new NewOrderMail($order->load('items'));
+
+        $mail->assertSeeInHtml('Café Clásico');
+        $mail->assertSeeInHtml('$ 40.000');
+        $mail->assertSeeInHtml(route('admin.orders.show', $order));
+        $mail->assertHasSubject("Nuevo pedido #{$order->id} · María Pérez");
     }
 }

@@ -3,7 +3,10 @@
 @section('title', 'Suscriptores')
 
 @section('content')
-  <div class="admin-head"><h1>Suscriptores</h1></div>
+  <div class="admin-head">
+    <h1>Suscriptores</h1>
+    <a href="{{ route('admin.subscribers.export') }}" class="link">Exportar a Excel (CSV)</a>
+  </div>
 
   <div class="panel">
     <table class="table">

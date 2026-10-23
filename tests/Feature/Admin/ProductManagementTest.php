@@ -40,7 +40,7 @@ class ProductManagementTest extends TestCase
         $user = User::factory()->create();
 
         $this->post(route('admin.login'), ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect(route('admin.products.index'));
+            ->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($user);
 
         $this->post(route('admin.logout'))->assertRedirect(route('admin.login'));
